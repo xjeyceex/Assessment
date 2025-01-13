@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 interface CardData {
   avatar: string;
@@ -33,7 +34,13 @@ const CardList = () => {
     <div className="flex flex-wrap justify-center gap-4 p-4">
       {data.map((item, index) => (
         <div key={index} className="bg-white p-6 rounded-lg shadow-lg w-64 max-w-xs hover:shadow-xl transition-shadow">
-          <img src={item.avatar} alt={item.name} className="w-32 h-32 rounded-full mx-auto border-4 border-gray-200" />
+          <Image
+            src={item.avatar}
+            alt={item.name}
+            width={128} // Replace with the actual width in pixels
+            height={128} // Replace with the actual height in pixels
+            className="w-32 h-32 rounded-full mx-auto border-4 border-gray-200"
+          />          
           <h3 className="text-2xl text-gray-800 text-center font-semibold mt-4">{item.name}</h3>
           <p className="text-gray-700 text-center mt-2">{item.description}</p>
         </div>
