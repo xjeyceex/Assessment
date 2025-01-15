@@ -1,12 +1,42 @@
 'use client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient'; 
+import { useRouter } from 'next/navigation';
 
 const CounterApp = () => {
   const [count, setCount] = useState(1);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const increment = () => setCount(count * 2);
   const decrement = () => setCount(count / 2);
   const reset = () => setCount(1);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error logging out:', error.message);
+    } else {
+      // Redirect to login page after logout
+      router.push('/login');
+    }
+  };
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+        console.log('session', session)
+      if (session?.user) {
+        setIsAuthenticated(true);
+      } else {
+        router.push('/login');
+      }
+    };
+
+    checkUser();
+  }, [router]);
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gray-100 space-y-8 p-6">
@@ -40,6 +70,13 @@ const CounterApp = () => {
         className="bg-gray-500 text-white px-6 py-3 rounded-lg mt-6 shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
       >
         Reset
+      </button>
+
+      <button
+        onClick={handleLogout}
+        className="bg-gray-500 text-white px-6 py-3 rounded-lg mt-6 shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
+      >
+        Log Out
       </button>
     </div>
   );
